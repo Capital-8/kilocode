@@ -32,6 +32,7 @@ test("Gateway modes override built-in agents before config, and post-config step
     "kilocode.subagent-background",
     "kilocode.recall",
     "kilocode.indexing",
+    "kilocode.pages",
     "kilocode.review",
     "kilocode.question",
     "kilocode.wakeup",
