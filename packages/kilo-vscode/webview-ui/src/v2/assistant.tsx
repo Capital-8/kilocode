@@ -18,7 +18,7 @@ import type { TimelineHighlight } from "../utils/timeline/highlight"
 import { partKey, timelinePart } from "../utils/timeline/timeline-parts"
 import { useV2 } from "./client"
 import { displaySettings } from "./display-settings"
-import { readableMessage } from "./error"
+import { readableMessage, isAuthSessionError } from "./error"
 import { tokenThroughputVisible } from "./kilo-settings"
 import { mcpServerFromError } from "./mcp-error"
 import { formatTokenThroughput, type TurnMetadata } from "./message-status"
@@ -240,14 +240,22 @@ export function AssistantMessage(props: {
 }
 
 /** The error card of an assistant step. The message list also uses it for a run that fails before a step. */
-export function ErrorCard(props: { error: { message: string } }) {
+export function ErrorCard(props: { error: { type?: string; message: string; status?: number } }) {
   const language = useLanguage()
+  const vscode = useVSCode()
   return (
     <Card variant="error" class="error-card" role="alert">
       <div class="error-card-body">
         <Icon name="warning" size="small" />
         <div class="error-card-message">{readableMessage(props.error, language.t)}</div>
       </div>
+      <Show when={isAuthSessionError(props.error)}>
+        <div class="error-card-actions">
+          <Button variant="secondary" size="small" onClick={() => vscode.postMessage({ type: "openProfile" })}>
+            {language.t("common.signIn")}
+          </Button>
+        </div>
+      </Show>
       <Collapsible variant="ghost">
         <Collapsible.Trigger class="error-details-trigger">
           <span>{language.t("error.details.show")}</span>
